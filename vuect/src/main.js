@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store/store'
+import store from './store'
+import mixins from "./mixins/index"
 
 import Toast from "vue-toastification"
 import "vue-toastification/dist/index.css"
@@ -23,28 +24,16 @@ const toastOptions = {
 	transition: "Vue-Toastification__fade",
 	maxToasts: 6,
 	newestOnTop: true
-  }
+}
 Vue.use(Toast, toastOptions);
 
 Vue.config.productionTip = false
 
 Vue.mixin({
 	methods: {
-		handleError: function (err) {
-			if (err.response && err.response.status == 401) {
-				//event bus notif
-				console.log(err)
-				store.commit('auth_error')
-				this.$router.push('/login').catch(()=>{});
-			}
-			else {
-				return //do nothing
-			}
-		}
+		handleError: mixins.handleError
 	}
 })
-
-// export const EventBus = new Vue()
 
 new Vue({
   router,

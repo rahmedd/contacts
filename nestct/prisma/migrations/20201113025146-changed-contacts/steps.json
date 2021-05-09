@@ -1,0 +1,39 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "photo"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "UserContact",
+      "field": "createdAt"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Contact",
+      "field": "firstName",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Contact",
+      "field": "lastName",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Contact",
+      "field": "name"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Contact",
+      "field": "details"
+    }
+  ]
+}

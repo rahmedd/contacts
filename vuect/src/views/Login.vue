@@ -9,8 +9,8 @@
 					input.form-control.margin-bottom(v-model='password', type='password', placeholder='Password')
 
 					div.login-btns
-						button.btn(v-on:click="") Cancel
-						button.btn.btn-primary Login
+						button.btn(type="button" @click="home()") Cancel
+						button.btn.btn-primary(type="submit") Login
 
 				small.msg(v-if= "incorrectAuth")
 					p Incorrect username or password
@@ -26,7 +26,6 @@
 
 <script>
 import axios from 'axios'
-import store from '../store/store'
 
 export default {
 	name: 'Login',
@@ -51,7 +50,7 @@ export default {
 			try {
 				const login = await axios.post(`/user/login`, formData)
 				if(login) {
-					store.commit('auth_success', login.data)
+					this.$store.commit('localStore/auth_success', login.data)
 					this.$toast.success("Logged in successfully!")
 					this.$router.push('/contacts')
 				}
@@ -64,7 +63,10 @@ export default {
 					this.$toast.error("Incorrect username or password!")
 				}
 			}
+		},
 
+		home() {
+			this.$router.push('/')
 		}
 	}
 }

@@ -13,6 +13,7 @@ div
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import Search from './Search'
 import Navbar from './Navbar'
 
@@ -23,10 +24,16 @@ export default {
 		Navbar
 	},
 	methods: {
+		...mapActions('cState', [
+			'setContact',
+			'setNewContact'
+		]),
+
 		newContact() {
-			this.$root.$emit('Contact', 'new')
+			// this.$root.$emit('Contact', 'new')
+			this.setNewContact()
 		}
-	},
+	}
 }
 </script>
 

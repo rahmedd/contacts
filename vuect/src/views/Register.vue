@@ -26,8 +26,8 @@
 							p.msg(v-if= "invalidPassword") passwords don't match
 
 				div.login-btns
-					button.btn(v-on:click="") Cancel
-					button.btn.btn-primary(v-on:click="submit") Sign up
+					button.btn(type="button" @click="home()") Cancel
+					button.btn.btn-primary(type="submit" v-on:click="submit") Sign up
 
 				//- small.msg(v-if= "invalidForm")
 				//- 	p please complete the required fields
@@ -109,6 +109,9 @@ export default {
 				}
 			}
 
+		},
+		home() {
+			this.$router.push('/')
 		}
 	}
 }

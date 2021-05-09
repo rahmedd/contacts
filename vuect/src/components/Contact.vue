@@ -80,6 +80,7 @@ div.contactContainer
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 import Modal from './Modal'
 
@@ -103,6 +104,12 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions('cState', [
+			'getContacts',
+			'refreshContacts',
+			'setContact'
+		]),
+		
 		//refresh ContactList & currently loaded contact
 		refresh(refreshType) {
 			// this.$root.$emit('ContactsList')
@@ -151,6 +158,7 @@ export default {
 					try {
 						const res = await axios.post(`/api/contact/`, this.contact)
 						this.contact.id = res.data.o.id
+						this.setContact(this.contact.id) // sets vuex contactId to component contactId
 					}
 					catch(err) {
 						this.handleError(err)
@@ -169,6 +177,8 @@ export default {
 				}
 
 				this.$toast.success("Saved")
+
+				this.refreshContacts() // refresh contacts list with currently selected letter or query
 			}
 			catch (err) {
 				this.handleError(err)
@@ -183,9 +193,8 @@ export default {
 			try {
 				if(this.contact.id) {
 					await axios.delete(`/api/contact/${ this.contact.id }`)
-					this.$root.$emit('ContactsList') //refresh contact list
+					// this.$root.$emit('ContactsList') //refresh contact list
 					this.refresh('reset')
-					console.log('contactcomponetn')
 				}
 				this.$toast.warning("Contact deleted")
 			}
@@ -193,7 +202,9 @@ export default {
 				this.handleError()
 				this.$toast.error("Error deleting contact!")
 			}
-
+			finally {
+				this.refreshContacts()
+			}
 		},
 
 		addNumber() {
@@ -242,28 +253,32 @@ export default {
 			}
 			this.showDeleteModal = false
 		},
-
-		recieveQuery() {
-			this.$root.$on('Contact', (action, query) => {
-				//search
-				if (action === 'view') {
-					this.getContact(query)
-				}
-				//new contact
-				else if(action === 'new') {
-					this.refresh('new')
-				}
-
-				//show "select a contact"
-				else if (action === 'reset'){
-					this.refresh('reset')
-				}
-			})
-		},
 	},
-	mounted: function() {
-		this.recieveQuery()
-	}
+
+	computed: {
+		...mapGetters('cState', {
+			contactId: 'contactId',
+			allMode: 'allMode',
+			viewMode: 'viewMode',
+		})
+	},
+
+	watch: {
+		contactId: function () {
+			if (this.contactId === 0 && !this.viewMode) {
+				this.refresh('new')
+			}
+			else if (this.contactId && this.viewMode) {
+				this.getContact(this.contactId)
+			}
+		},
+
+		// viewMode: function() {
+		// 	if (!this.viewMode && this.contactId === null) {
+		// 		this.refresh('new')
+		// 	}
+		// }
+	},
 }
 </script>
 

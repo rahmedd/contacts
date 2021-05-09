@@ -1,9 +1,9 @@
 <template lang="pug">
 div.container
-	div.btn.ctContainer(v-if="noContactsFound")
+	div.btn.ctContainer(v-if="contactList == 0")
 		p No contacts found.
 	div.btn.ctContainer(
-		v-for="contact in contacts"
+		v-for="contact in contactList"
 		:class="{ active: isActive(contact.id) }"
 		@click="activateContact(contact.id)"
 	)
@@ -13,95 +13,31 @@ div.container
 </template>
 
 <script>
-import axios from 'axios'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
 	name: 'Contactslist',
 	data: () => {
-		return {
-			contacts: [],
-			active: null,
-			searchMode: false
-		}
+		return {}
 	},
 	methods: {
-		contactSort() {
-			this.contacts.sort((a, b) => a.firstName.localeCompare(b.firstName))
-		},
+		...mapActions('cState', [
+			'setContact'
+		]),
 
 		activateContact(id) {
-			this.active = id
-			this.$root.$emit('Contact', 'view', id) //emit event to contact with id
+			this.setContact(id)
 		},
 
 		isActive: function(id) {
-			if(id === this.active) {
-				return true
-			}
-			return false
-		},
-
-		async getAllContacts() {
-			try {
-				const contacts = await axios.get(`/api/contacts`)
-				this.contacts = contacts.data.o
-				this.contactSort()
-			}
-			catch (err) {
-				this.handleError(err)
-			}
-		},
-		
-		async getContactsSearch(searchQuery) {
-			try {
-				const contacts = await axios.get(`/api/contacts/${searchQuery}`)
-				this.contacts = contacts.data.o
-			}
-			catch (err) {
-				this.handleError(err)
-			}
-		},
-
-		recieveQuery() {
-			this.$root.$on('ContactsList', (queryType, query) => {
-				//search
-				if (queryType === 'search') {
-					this.searchMode = true
-					this.getContactsSearch(query)
-				}
-
-				//single letter (alphabetically)
-				else if (queryType === 'alphasort') {
-					this.searchMode = false
-					this.active = null
-					this.getContactsSearch(query)
-				}
-
-				//select id
-				else if (queryType === 'selectId') {
-					this.active = query
-				}
-
-				//get all
-				else {
-					if (this.searchMode === false) {
-						this.getAllContacts()
-					}
-				}
-			})
+			return id === this.contactId
 		},
 	},
 	computed: {
-		noContactsFound: function() {
-			if (this.contacts && this.contacts.length === 0) {
-				return true
-			}
-			return false
-		},
-	},
-	mounted: async function() {
-		this.recieveQuery()
-		await this.getAllContacts()
+		...mapGetters('cState', {
+			contactList: 'contactList',
+			contactId: 'contactId',
+		}),
 	}
 }
 </script>

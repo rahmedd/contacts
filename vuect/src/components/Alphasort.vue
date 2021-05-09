@@ -1,7 +1,7 @@
 <template lang="pug">
 div
 	div.Alphasort
-		div.btnContainer(@click="activateAllBtn()" :class="{ active: this.active === null }") all
+		div.btnContainer(@click="activateAllBtn()" :class="{ active: this.allMode === true }" ) all
 		
 		div.btnContainer(
 			v-for="letter in letters"
@@ -13,46 +13,44 @@ div
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
 	name: 'Alphasort',
 	data: () => {
 		return {
 			letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-			active: null
 		}
 	},
 	methods: {
+		...mapActions('cState', {
+			getContacts: 'getContacts',
+			setAll: 'setAll'
+		}),
+		
 		activateLetter(letter){
-			this.active = letter
-			this.$root.$emit('Contact', 'reset') //reset contact
-			this.$root.$emit('ContactsList', 'alphasort', letter) //to alphabetically query list
-		},
-
-		activateAllBtn() {
-			this.active = null
-			this.$root.$emit('ContactsList')
-			console.log('alphacomponetn')
+			this.getContacts(letter)
 		},
 
 		isActive: function(letter) {
-			if(letter === this.active) {
-				return true
-			}
-			return false
+			return letter === this.letter
 		},
 
-		//reset to all when search is used
-		recieveQuery() {
-			this.$root.$on('ContactsList', (queryType, query) => {
-				if (queryType === 'search') {
-					this.active = null
-				}
-			})
+		activateAllBtn() {
+			this.getContacts()
+			this.setAll()
 		},
 
 	},
+	computed: {
+		...mapGetters('cState', {
+			allMode: 'allMode',
+			letter: 'letter'
+		})
+	},
 	mounted: function() {
-		this.recieveQuery()
+		// this.$store.dispatch('cState/getContacts')
+		this.getContacts()
 	}
 }
 </script>

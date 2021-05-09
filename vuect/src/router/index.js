@@ -4,7 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Contacts from '../views/Contacts.vue'
-import store from '../store/store'
+import store from '../store/index'
 
 Vue.use(VueRouter)
 
@@ -50,17 +50,20 @@ const router = new VueRouter({
 	routes
 })
 
-router.beforeEach((to, from, next) => {
-	if (to.matched.some(record => record.meta.requiresAuth)) {
-		if (store.getters.isLoggedIn) {
-			next()
-			return
-		}
-		next('/login')
-	}
-	else {
-		next()
-	}
+router.beforeEach((to, from, next) => 
+{
+    let currentUser = store.getters['localStore/isLoggedIn']
+    let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+
+    if (requiresAuth && !currentUser) {
+        next('/login')
+    } 
+
+    else {
+        next()
+    }
+
 })
 
 export default router

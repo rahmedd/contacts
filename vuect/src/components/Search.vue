@@ -6,46 +6,38 @@ div.SearchContainer
 
 <script>
 import _ from 'lodash'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
 	name: 'Search',
 	data: () => {
-		return {
-			query: null,
-		}
+		return {}
 	},
 	methods: {
-		sendSearch() {
-			this.$root.$emit('ContactsList', 'search', this.query)
-		},
-	
-		sendGetAll() {
-			this.$root.$emit('ContactsList')
-			console.log('searchcomponetn')
-		},
-		
-		//clear search input when AlphaSort is used
-		recieveQuery() {
-			this.$root.$on('ContactsList', (queryType, query) => {
-				if (queryType === 'alphasort') {
-					this.query = null
+		...mapActions('cState', [
+			'getContacts',
+			'search'
+		]),
+	},
+	computed: {
+		...mapGetters('cState', {
+			storeQuery: 'searchQuery'
+		}),
+		query: {
+			get() {
+				return this.$store.state.cState.searchQuery
+			},
+			set: _.debounce(function(value) {
+				if (value && value.length > 0) {
+					this.getContacts(value)
+					return
 				}
-			})
-		},
+				else { //if search field is empty
+					this.getContacts()
+				}
+			}, 500)
+		}
 	},
-	watch: {
-		query: _.debounce(function () {
-			if (this.query && this.query.length > 0) {
-				this.sendSearch()
-			}
-			else if (this.query === ''){
-				this.sendGetAll()
-			}
-		}, 500)
-	},
-	mounted: function() {
-		this.recieveQuery()
-	}
 }
 </script>
 

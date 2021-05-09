@@ -15,7 +15,6 @@ div.navContainer
 
 <script>
 import ToggleSwitch from './ToggleSwitch'
-import store from '../store/store'
 
 export default {
 	name: 'Navbar',
@@ -34,7 +33,7 @@ export default {
 			this.$router.push('/login')
 		},
 		logout() {
-			store.commit('logout')
+			// store.commit('logout')
 			this.$toast.warning("Logged out!")
 			this.$router.push('/login')
 		},
@@ -84,7 +83,6 @@ export default {
 		}
 	},
 	mounted: function() {
-		// console.log(this.getPreferredMode())
 		if (this.getPreferredMode() === 'dark-mode') {
 			this.toggleDarkMode()
 		}
@@ -99,7 +97,8 @@ export default {
 			}
 		},
 		isLoggedin: function() {
-			return this.$store.getters['isLoggedIn']
+			// return this.$store.getters['isLoggedIn']
+			return true
 		}
 	}
 }
