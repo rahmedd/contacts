@@ -15,3 +15,7 @@ Prerequisites: You must have Node 14, Postgres 12, and Redis installed.
 
 ## Credits
 The session functionality was written by [Insidexa](https://github.com/Insidexa) at [https://github.com/Insidexa/nestjs-session-example](https://github.com/Insidexa/nestjs-session-example)
+
+## Screenshots
+![screenshot-light-mode](https://github.com/rahmedd/contacts/blob/main/vuect/public/images/laptopLight.png?raw=true)
+![screenshot-dark-mode](https://github.com/rahmedd/contacts/blob/main/vuect/public/images/laptopDark.png?raw=true)
